@@ -1,0 +1,40 @@
+--- Makefile.orig	2012-12-28 23:04:05.000000000 +0900
++++ Makefile	2013-01-11 08:11:32.876155707 +0900
+@@ -499,8 +499,8 @@
+ # pass it in the "ADDLIB" variable if needed. Similarly, use ADDINC and ADDLIB
+ # to specify -I and -L if your OpenSSL library is not in the standard path.
+ BUILD_OPTIONS   += $(call ignore_implicit,USE_OPENSSL)
+-OPTIONS_CFLAGS  += -DUSE_OPENSSL
+-OPTIONS_LDFLAGS += -lssl -lcrypto
++OPTIONS_CFLAGS  += -DUSE_OPENSSL $(shell pkg-config --cflags openssl)
++OPTIONS_LDFLAGS += $(shell pkg-config --libs openssl)
+ OPTIONS_OBJS  += src/ssl_sock.o src/shctx.o
+ ifneq ($(USE_PRIVATE_CACHE),)
+ OPTIONS_CFLAGS  += -DUSE_PRIVATE_CACHE
+@@ -513,6 +513,8 @@
+ endif
+ endif
+ 
++_lib := $(shell /bin/rpm --showrc | awk '{if ($$2=="_lib") print $$3}')
++
+ ifneq ($(USE_PCRE),)
+ # PCREDIR is the directory hosting include/pcre.h and lib/libpcre.*. It is
+ # automatically detected but can be forced if required. Forcing it to an empty
+@@ -522,7 +524,7 @@
+ endif
+ ifeq ($(USE_STATIC_PCRE),)
+ OPTIONS_CFLAGS  += -DUSE_PCRE $(if $(PCREDIR),-I$(PCREDIR)/include)
+-OPTIONS_LDFLAGS += $(if $(PCREDIR),-L$(PCREDIR)/lib) -lpcreposix -lpcre
++OPTIONS_LDFLAGS += $(if $(PCREDIR),-L$(PCREDIR)/$(_lib)) -lpcreposix -lpcre
+ endif
+ BUILD_OPTIONS   += $(call ignore_implicit,USE_PCRE)
+ endif
+@@ -534,7 +536,7 @@
+ PCREDIR         := $(shell pcre-config --prefix 2>/dev/null || echo /usr/local)
+ endif
+ OPTIONS_CFLAGS  += -DUSE_PCRE $(if $(PCREDIR),-I$(PCREDIR)/include)
+-OPTIONS_LDFLAGS += $(if $(PCREDIR),-L$(PCREDIR)/lib) -Wl,-Bstatic -lpcreposix -lpcre -Wl,-Bdynamic
++OPTIONS_LDFLAGS += $(if $(PCREDIR),-L$(PCREDIR)/$(_lib)) -Wl,-Bstatic -lpcreposix -lpcre -Wl,-Bdynamic
+ BUILD_OPTIONS   += $(call ignore_implicit,USE_STATIC_PCRE)
+ endif
+ 

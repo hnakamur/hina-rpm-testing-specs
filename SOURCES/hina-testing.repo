@@ -1,0 +1,13 @@
+[hina-testing]
+name=hina-testing RPM repository
+baseurl=http://naruh.com/pub/hina-testing/el6/RPMS/$basearch
+enabled=1
+gpgcheck=1
+gpgkey=http://naruh.com/pub/hina-testing/el6/SOURCES/RPM-GPG-KEY-hina-testing
+
+[hina-testing-noarch]
+name=hina-testing noarch RPM repository
+baseurl=http://naruh.com/pub/hina-testing/el6/RPMS/noarch
+enabled=1
+gpgcheck=1
+gpgkey=http://naruh.com/pub/hina-testing/el6/SOURCES/RPM-GPG-KEY-hina-testing
