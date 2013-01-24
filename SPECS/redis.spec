@@ -6,7 +6,7 @@
 
 Name:           redis
 Version:        2.6.9
-Release:        5%{?dist}.hn
+Release:        6%{?dist}.hn
 Summary:        An open source, advanced key-value store.
 License:        BSD
 URL:            http://redis.io/
@@ -14,7 +14,7 @@ Group:          Applications/Services
 
 Source0:        http://redis.googlecode.com/files/redis-%{version}.tar.gz
 Source1:        redis_conf
-Source2:        redis.upstart.conf
+Source2:        redis.daemontools.run
 
 Requires:       daemontools
 
@@ -33,16 +33,11 @@ make PREFIX=%{_prefix}
 
 %install
 make install PREFIX=$RPM_BUILD_ROOT%{_prefix}
-mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/redis
+mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/redis/service/redis_%{redis_port}
 sed 's/\${redis_port}/'%{redis_port}'/' \
   %{SOURCE1} > $RPM_BUILD_ROOT%{_sysconfdir}/redis/%{redis_port}.conf
-mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/init
-sed '
-s/\${redis_port}/'%{redis_port}'/g
-s/\${redis_user}/'%{redis_user}'/g
-s/\${redis_group}/'%{redis_group}'/g
-' \
-  %{SOURCE2} > $RPM_BUILD_ROOT%{_sysconfdir}/init/redis_%{redis_port}.conf
+sed 's/\${redis_port}/'%{redis_port}'/' \
+  %{SOURCE2} > $RPM_BUILD_ROOT%{_sysconfdir}/redis/service/redis_%{redis_port}/run
 mkdir -p $RPM_BUILD_ROOT%{_sharedstatedir}/redis/%{redis_port}
 mkdir -p $RPM_BUILD_ROOT%{_localstatedir}/log/redis
 
@@ -55,19 +50,23 @@ getent passwd %{redis_user} >/dev/null || \
 
 %preun
 if [ "$1" = "0" ]; then
-  status redis_%{redis_port} | grep -q start && stop redis_%{redis_port} || :
+  [ -s /service/redis_%{redis_port} ] && rm /service/redis_%{redis_port} || :
+  svok %{_sysconfdir}/redis/service/redis_%{redis_port} &&
+    svc -tx %{_sysconfdir}/redis/service/redis_%{redis_port} || :
 fi
 
 %files
 %{_prefix}/
 %config %{_sysconfdir}/redis/%{redis_port}.conf
-%config %{_sysconfdir}/init/redis_%{redis_port}.conf
+%attr(0755,%{redis_user},%{redis_group}) %{_sysconfdir}/redis/service/redis_%{redis_port}/run
 %attr(0755,%{redis_user},%{redis_group}) %dir %{_sharedstatedir}/redis
 %attr(0755,%{redis_user},%{redis_group}) %dir %{_sharedstatedir}/redis/%{redis_port}
 %attr(0755,%{redis_user},%{redis_group}) %dir %{_localstatedir}/log/redis
 
 %changelog
 
+* Thu Jan 17 2013 Hiroaki Nakamura <hnakamur@gmail.com> - 2.6.9-6
+- Use daemontools instead of upstart.
 * Thu Jan 17 2013 Hiroaki Nakamura <hnakamur@gmail.com> - 2.6.9-5
 - Use setuidgid to execute redis in upstart.
 * Thu Jan 17 2013 Hiroaki Nakamura <hnakamur@gmail.com> - 2.6.9-4
