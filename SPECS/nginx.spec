@@ -8,41 +8,29 @@
 Summary: high performance web server
 Name: nginx
 Version: 1.2.6
-Release: 3%{?dist}.hn
+Release: 4%{?dist}.hn
 Vendor: nginx inc.
 URL: http://nginx.org/
 
 Source0: http://nginx.org/download/%{name}-%{version}.tar.gz
 Source1: logrotate
-Source2: nginx.init
-Source3: nginx.sysconf
-Source4: nginx.conf
-Source5: nginx.vh.default.conf
-Source6: nginx.vh.example_ssl.conf
-Source7: nginx.suse.init
+Source2: nginx.daemontools.run
+Source3: nginx.conf
+Source4: nginx.vh.default.conf
+Source5: nginx.vh.example_ssl.conf
 
 License: 2-clause BSD-like license
-%if 0%{?suse_version}
-Group: Productivity/Networking/Web/Servers
-%else
 Group: System Environment/Daemons
-%endif
 
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 BuildRequires: zlib-devel
 BuildRequires: pcre8-devel >= 8.32
 BuildRequires: perl
-%if 0%{?suse_version}
-BuildRequires: libopenssl-devel
-Requires(pre): pwdutils
-%else
 BuildRequires: openssl101-devel >= 1.0.1c
 Requires: openssl101 >= 1.0.1c
 Requires: pcre8 >= 8.32
-Requires: initscripts >= 8.36
+Requires(post): daemontools
 Requires(pre): shadow-utils
-Requires(post): chkconfig
-%endif
 Provides: webserver
 
 %description
@@ -152,27 +140,18 @@ make %{?_smp_mflags}
 
 %{__mkdir} -p $RPM_BUILD_ROOT%{_sysconfdir}/nginx/conf.d
 %{__rm} $RPM_BUILD_ROOT%{_sysconfdir}/nginx/nginx.conf
-%{__install} -m 644 -p %{SOURCE4} \
+%{__install} -m 644 -p %{SOURCE3} \
    $RPM_BUILD_ROOT%{_sysconfdir}/nginx/nginx.conf
-%{__install} -m 644 -p %{SOURCE5} \
+%{__install} -m 644 -p %{SOURCE4} \
    $RPM_BUILD_ROOT%{_sysconfdir}/nginx/conf.d/default.conf
-%{__install} -m 644 -p %{SOURCE6} \
+%{__install} -m 644 -p %{SOURCE5} \
    $RPM_BUILD_ROOT%{_sysconfdir}/nginx/conf.d/example_ssl.conf
 
-%{__mkdir} -p $RPM_BUILD_ROOT%{_sysconfdir}/sysconfig
-%{__install} -m 644 -p %{SOURCE3} \
-   $RPM_BUILD_ROOT%{_sysconfdir}/sysconfig/nginx
-
-# install SYSV init stuff
-%{__mkdir} -p $RPM_BUILD_ROOT%{_initrddir}
-%if 0%{?suse_version}
-%{__install} -m755 %{SOURCE7} \
-   $RPM_BUILD_ROOT%{_initrddir}/nginx
-%else
+# install daemontools  stuff
+%{__mkdir} -p $RPM_BUILD_ROOT%{_sysconfdir}/nginx/service
 %{__install} -m755 %{SOURCE2} \
-   $RPM_BUILD_ROOT%{_initrddir}/nginx
+   $RPM_BUILD_ROOT%{_sysconfdir}/nginx/service/run
 
-%endif
 # install log rotation stuff
 %{__mkdir} -p $RPM_BUILD_ROOT%{_sysconfdir}/logrotate.d
 %{__install} -m 644 -p %{SOURCE1} \
@@ -203,8 +182,9 @@ make %{?_smp_mflags}
 %config(noreplace) %{_sysconfdir}/nginx/win-utf
 
 %config(noreplace) %{_sysconfdir}/logrotate.d/nginx
-%config(noreplace) %{_sysconfdir}/sysconfig/nginx
-%{_initrddir}/nginx
+
+%dir %{_sysconfdir}/nginx/service
+%attr(0755,root,root) %{_sysconfdir}/nginx/service/run
 
 %dir %{_datadir}/nginx
 %dir %{_datadir}/nginx/html
@@ -225,29 +205,12 @@ getent passwd %{nginx_user} >/dev/null || \
 exit 0
 
 %post
-# Register the nginx service
-if [ $1 -eq 1 ]; then
-    /sbin/chkconfig --add nginx
-    # print site info
-    cat <<BANNER
-----------------------------------------------------------------------
-
-Thanks for using NGINX!
-
-Check out our community web site:
-* http://nginx.org/en/support.html
-
-If you have questions about commercial support for NGINX please visit:
-* http://www.nginx.com/support.html
-
-----------------------------------------------------------------------
-BANNER
-fi
 
 %preun
 if [ $1 -eq 0 ]; then
-    /sbin/service nginx stop > /dev/null 2>&1
-    /sbin/chkconfig --del nginx
+  [ -s /service/nginx ] && rm /service/nginx || :
+  svok %{_sysconfdir}/nginx/service/nginx &&
+    svc -tx %{_sysconfdir}/nginx/service/nginx || :
 fi
 
 %postun
@@ -256,6 +219,9 @@ if [ $1 -ge 1 ]; then
 fi
 
 %changelog
+* Thu Jan 24 2013 Hiroaki Nakamura <hnakamur@gmail.com> 1.2.6-4
+- Use daemontools instead of initscript. Drop suse support.
+
 * Fri Jan 11 2013 Hiroaki Nakamura <hnakamur@gmail.com> 1.2.6-3
 - Update for changes of name in dependent packages.
 
