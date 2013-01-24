@@ -13,10 +13,10 @@ URL:            http://redis.io/
 Group:          Applications/Services
 
 Source0:        http://redis.googlecode.com/files/redis-%{version}.tar.gz
-Source1:        redis_conf
+Source1:        redis.conf
 Source2:        redis.daemontools.run
 
-Requires:       daemontools
+Requires(post): daemontools
 
 Prefix:         %{_prefix}
 
