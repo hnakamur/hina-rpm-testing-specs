@@ -7,8 +7,8 @@
 
 Summary: high performance web server
 Name: nginx
-Version: 1.2.6
-Release: 3%{?dist}.hn
+Version: 1.3.11
+Release: 1%{?dist}.hn
 Vendor: nginx inc.
 URL: http://nginx.org/
 
@@ -20,6 +20,8 @@ Source4: nginx.conf
 Source5: nginx.vh.default.conf
 Source6: nginx.vh.example_ssl.conf
 Source7: nginx.suse.init
+
+Patch0: http://nginx.org/patches/spdy/patch.spdy.txt
 
 License: 2-clause BSD-like license
 %if 0%{?suse_version}
@@ -58,6 +60,7 @@ not stripped version of nginx build with the debugging log support
 
 %prep
 %setup -q
+%patch0 -p1
 
 %build
 export PKG_CONFIG_PATH=%{extra_pkg_config_path}:$PKG_CONFIG_PATH
@@ -88,6 +91,7 @@ export PKG_CONFIG_PATH=%{extra_pkg_config_path}:$PKG_CONFIG_PATH
         --with-http_random_index_module \
         --with-http_secure_link_module \
         --with-http_stub_status_module \
+        --with-http_spdy_module \
         --with-mail \
         --with-mail_ssl_module \
         --with-file-aio \
@@ -126,6 +130,7 @@ make %{?_smp_mflags}
         --with-http_random_index_module \
         --with-http_secure_link_module \
         --with-http_stub_status_module \
+        --with-http_spdy_module \
         --with-mail \
         --with-mail_ssl_module \
         --with-file-aio \
@@ -256,6 +261,9 @@ if [ $1 -ge 1 ]; then
 fi
 
 %changelog
+* Mon Jan 28 2013 Hiroaki Nakamura <hnakamur@gmail.com> 1.3.11-1
+- Update to 1.3.11. Apply the SPDY patch.
+
 * Fri Jan 11 2013 Hiroaki Nakamura <hnakamur@gmail.com> 1.2.6-3
 - Update for changes of name in dependent packages.
 
