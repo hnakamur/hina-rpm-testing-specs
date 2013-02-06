@@ -3,12 +3,12 @@
 %define libmin 0
 %define librel 1
 %define librev c
-Release: 1%{?dist}.hn
+Release: 2%{?dist}.hn
 
-%define _prefix /opt
-Prefix: %{_prefix}
-
-%define openssldir /var/ssl
+%define _prefix /opt/openssl
+%define _datarootdir %{_prefix}
+%define etc_opt_dir /etc/opt
+%define openssldir %{etc_opt_dir}/openssl
 
 Summary: Secure Sockets Layer and cryptography libraries and tools
 Name: openssl101
@@ -107,7 +107,7 @@ LD_LIBRARY_PATH=`pwd` make test
 
 %install
 rm -rf $RPM_BUILD_ROOT
-make MANDIR=%{_mandir} MANSUFFIX=ssl INSTALL_PREFIX="$RPM_BUILD_ROOT" install
+make MANDIR=%{_mandir} LIBDIR=%{_lib} MANSUFFIX=ssl INSTALL_PREFIX="$RPM_BUILD_ROOT" install
 
 # Make backwards-compatibility symlink to ssleay
 ln -sf %{_bindir}/openssl $RPM_BUILD_ROOT%{_bindir}/ssleay
