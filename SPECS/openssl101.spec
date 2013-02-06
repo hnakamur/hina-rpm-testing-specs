@@ -2,8 +2,8 @@
 %define libmaj 1
 %define libmin 0
 %define librel 1
-%define librev c
-Release: 2%{?dist}.hn
+%define librev d
+Release: 1%{?dist}.hn
 
 %define _prefix /opt/openssl
 %define _datarootdir %{_prefix}
@@ -154,6 +154,8 @@ ldconfig
 ldconfig
 
 %changelog
+* Wed Feb  6 2013 Hiroaki Nakamura <hnakamur@gmail.com> - 1.0.1d-1
+- Upgrade to upstream version 1.0.1d.
 * Thu Jan 10 2013 Hiroaki Nakamura <hnakamur@gmail.com>
 - Modify to build on CentOS 6.3.
 * Sun Jun  6 2005 Richard Levitte <richard@levitte.org>
