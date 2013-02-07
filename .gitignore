@@ -3,4 +3,5 @@
 !/.rpmmacros
 !/README.md
 !/SOURCES/
+/SOURCES/*.tar.*
 !/SPECS/
