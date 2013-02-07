@@ -1,16 +1,13 @@
-%global         gitcommit b9f03e6
+%global gitcommit 333ff99
 Name:           fcgiwrap
-Version:        1.0.3.git.1.%{gitcommit}
+Version:        1.1.0
 Release:        1%{?dist}.hn
 Summary:        Simple FastCGI wrapper for CGI scripts
 License:        MIT
 URL:            http://nginx.localdomain.pl/
 Group:          System Environment/Daemons
 
-Source0:        https://github.com/gnosek/fcgiwrap/tarball/%{gitcommit}
-
-%define _prefix /opt
-Prefix: %{_prefix}
+Source0:        https://github.com/gnosek/fcgiwrap/tarball/%{version}
 
 BuildRequires:      autoconf
 BuildRequires:      fcgi-devel
@@ -42,6 +39,8 @@ make install DESTDIR=%{buildroot}
 
 %changelog
 
+* Fri Feb 08 2013 Hiroaki Nakamura <hnakamur@gmail.com> - 1.1.0-1
+- new upstream release.
 * Fri Jan 11 2013 Hiroaki Nakamura <hnakamur@gmail.com> - 1.0.3.20120908-1
 - Change version to increase monotonously.
 * Wed Jan  9 2013 Hiroaki Nakamura <hnakamur@gmail.com> - 1.0.3-3.gitb9f03e6377
