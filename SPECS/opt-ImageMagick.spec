@@ -1,22 +1,23 @@
-%define VER 6.8.1
-%define Patchlevel 9
+%define VER 6.8.2
+%define Patchlevel 6
+%define origname ImageMagick
 
-Name:           ImageMagick
+Name:           opt-ImageMagick
 Version:        %{VER}.%{Patchlevel}
 Release:        1%{?dist}
 Summary:        An X application for displaying and manipulating images
 Group:          Applications/Multimedia
 License:        ImageMagick
 Url:            http://www.imagemagick.org/
-# Source0:        ftp://ftp.ImageMagick.org/pub/%{name}/%{name}-%{VER}-%{Patchlevel}.tar.lzma
+# Source0:        ftp://ftp.ImageMagick.org/pub/%{origname}/%{origname}-%{VER}-%{Patchlevel}.tar.lzma
 # Reference mirror ftp://ftp.nluug.nl instead which keeps older releases longer
-#Source0:        ftp://ftp.nluug.nl/pub/%{name}/%{name}-%{VER}-%{Patchlevel}.tar.lzma
-Source0:        http://www.imagemagick.org/download/%{name}-%{VER}-%{Patchlevel}.tar.xz
+#Source0:        ftp://ftp.nluug.nl/pub/%{origname}/%{origname}-%{VER}-%{Patchlevel}.tar.lzma
+Source0:        http://www.imagemagick.org/download/%{origname}-%{VER}-%{Patchlevel}.tar.xz
 
-%define _prefix /opt
-Prefix:         %{_prefix}
+%define _prefix /opt/ImageMagick
+%define _sysconfdir %{_prefix}/etc
 
-BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
+BuildRoot:      %{_tmppath}/%{origname}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires:  bzip2-devel, freetype-devel, libjpeg-devel, libpng-devel
 BuildRequires:  libtiff-devel, giflib-devel, zlib-devel, perl-devel
 BuildRequires:  ghostscript-devel
@@ -43,7 +44,7 @@ ImageMagick-devel as well.
 %package devel
 Summary: Library links and header files for ImageMagick app development
 Group: Development/Libraries
-Requires: %{name} = %{version}-%{release}
+Requires: %{origname} = %{version}-%{release}
 Requires: libX11-devel, libXext-devel, libXt-devel
 Requires: ghostscript-devel
 Requires: bzip2-devel
@@ -79,7 +80,7 @@ http://www.imagemagick.org/
 %package perl
 Summary: ImageMagick perl bindings
 Group: System Environment/Libraries
-Requires: %{name} = %{version}-%{release}
+Requires: %{origname} = %{version}-%{release}
 Requires: perl(:MODULE_COMPAT_%(eval "`%{__perl} -V:version`"; echo $version))
 
 %description perl
@@ -92,7 +93,7 @@ ImageMagick.
 %package c++
 Summary: ImageMagick Magick++ library (C++ bindings)
 Group: System Environment/Libraries
-Requires: %{name} = %{version}-%{release}
+Requires: %{origname} = %{version}-%{release}
 
 %description c++
 This package contains the Magick++ library, a C++ binding to the ImageMagick
@@ -104,8 +105,8 @@ Install ImageMagick-c++ if you want to use any applications that use Magick++.
 %package c++-devel
 Summary: C++ bindings for the ImageMagick library
 Group: Development/Libraries
-Requires: %{name}-c++ = %{version}-%{release}
-Requires: %{name}-devel = %{version}-%{release}
+Requires: %{origname}-c++ = %{version}-%{release}
+Requires: %{origname}-devel = %{version}-%{release}
 
 %description c++-devel
 ImageMagick-devel contains the static libraries and header files you'll
@@ -121,7 +122,7 @@ however.
 
 
 %prep
-%setup -q -n %{name}-%{VER}-%{Patchlevel}
+%setup -q -n %{origname}-%{VER}-%{Patchlevel}
 
 sed -i 's/libltdl.la/libltdl.so/g' configure
 iconv -f ISO-8859-1 -t UTF-8 README.txt > README.txt.tmp
@@ -160,7 +161,7 @@ make
 rm -rf $RPM_BUILD_ROOT
 
 make install DESTDIR=$RPM_BUILD_ROOT INSTALL="install -p"
-cp -a www/source $RPM_BUILD_ROOT%{_datadir}/doc/%{name}-%{VER}
+cp -a www/source $RPM_BUILD_ROOT%{_datadir}/doc/%{origname}-%{VER}
 rm $RPM_BUILD_ROOT%{_libdir}/*.la
 
 # fix weird perl Magick.so permissions
@@ -194,10 +195,10 @@ fi
 %define wordsize 32
 %endif
 
-mv $RPM_BUILD_ROOT%{_includedir}/%{name}/magick/magick-config.h \
-   $RPM_BUILD_ROOT%{_includedir}/%{name}/magick/magick-config-%{wordsize}.h
+mv $RPM_BUILD_ROOT%{_includedir}/%{origname}/magick/magick-config.h \
+   $RPM_BUILD_ROOT%{_includedir}/%{origname}/magick/magick-config-%{wordsize}.h
 
-cat >$RPM_BUILD_ROOT%{_includedir}/%{name}/magick/magick-config.h <<EOF
+cat >$RPM_BUILD_ROOT%{_includedir}/%{origname}/magick/magick-config.h <<EOF
 #ifndef IMAGEMAGICK_MULTILIB
 #define IMAGEMAGICK_MULTILIB
 
@@ -216,7 +217,7 @@ EOF
 
 # add config file in /etc/ld.so.conf.d/
 mkdir -p $RPM_BUILD_ROOT/etc/ld.so.conf.d
-echo %{_libdir} > $RPM_BUILD_ROOT/etc/ld.so.conf.d/%{name}-%{version}.conf
+echo %{_libdir} > $RPM_BUILD_ROOT/etc/ld.so.conf.d/%{origname}-%{version}.conf
 
 # create symbolic links for shared libraries
 pushd $RPM_BUILD_ROOT%{_libdir}
@@ -242,7 +243,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(-,root,root,-)
-/etc/ld.so.conf.d/%{name}-%{version}.conf
+/etc/ld.so.conf.d/%{origname}-%{version}.conf
 %config %{_sysconfdir}/ImageMagick/*.xml
 %doc QuickStart.txt ChangeLog Platforms.txt
 %doc README.txt LICENSE NOTICE AUTHORS.txt NEWS.txt
@@ -253,10 +254,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/libMagick++.so.*
 %{_libdir}/libMagickWand.so.*
 %{_bindir}/[a-z]*
-%{_libdir}/%{name}-%{VER}
-%{_datadir}/%{name}-%{VER}
+%{_libdir}/%{origname}-%{VER}
+%{_datadir}/%{origname}-%{VER}
 %{_mandir}/man[145]/[a-z]*
-%{_mandir}/man1/%{name}.*
+%{_mandir}/man1/%{origname}.*
 
 %files devel
 %defattr(-,root,root,-)
@@ -283,9 +284,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/pkgconfig/Magick++.pc
 %{_libdir}/pkgconfig/MagickWand.pc
 %{_libdir}/pkgconfig/Wand.pc
-%dir %{_includedir}/%{name}
-%{_includedir}/%{name}/magick
-%{_includedir}/%{name}/wand
+%dir %{_includedir}/%{origname}
+%{_includedir}/%{origname}/magick
+%{_includedir}/%{origname}/wand
 %{_mandir}/man1/Magick-config.*
 %{_mandir}/man1/Magick++-config.*
 %{_mandir}/man1/MagickCore-config.*
@@ -294,7 +295,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files doc
 %defattr(-,root,root,-)
-%doc %{_datadir}/doc/%{name}-%{VER}
+%doc %{_datadir}/doc/%{origname}-%{VER}
 
 %files c++
 %defattr(-,root,root,-)
@@ -306,8 +307,8 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(-,root,root,-)
 %doc Magick++/examples
 %{_bindir}/Magick++-config
-%{_includedir}/%{name}/Magick++
-%{_includedir}/%{name}/Magick++.h
+%{_includedir}/%{origname}/Magick++
+%{_includedir}/%{origname}/Magick++.h
 %{_libdir}/libMagick++.so
 %{_libdir}/pkgconfig/Magick++.pc
 %{_libdir}/pkgconfig/ImageMagick++.pc
@@ -321,6 +322,10 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Fri Feb 08 2013 Hiroaki Nakamura <hnakamur@gmail.com> - 6.8.2-6
+- Update to upstream version 6.8.2-6. Stop the rpm relocatable.
+- Change rpm name to opt-ImageMagick and prefix to /opt/ImageMagick.
+
 * Wed Jan 09 2013 Hiroaki Nakamura <hnakamur@gmail.com> - 6.8.1-9
 - Change prefix to /opt and make the rpm relocatable.
 
