@@ -4,7 +4,7 @@ Name: haproxy
 %define dev_ver dev17
 Version: %{main_ver}%{dev_ver}
 %define tarbasename %{name}-%{main_ver}-%{dev_ver}
-Release: 2%{?dist}
+Release: 2%{?dist}.hn
 License: GPL
 Group: System Environment/Daemons
 URL: http://haproxy.1wt.eu/

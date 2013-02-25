@@ -3,7 +3,7 @@
 %define libmin 0
 %define librel 1
 %define librev d
-Release: 1%{?dist}
+Release: 1%{?dist}.hn
 
 %define _prefix /opt/openssl
 %define _datarootdir %{_prefix}

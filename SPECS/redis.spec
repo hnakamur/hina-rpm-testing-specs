@@ -6,7 +6,7 @@
 
 Name:           redis
 Version:        2.6.9
-Release:        6%{?dist}
+Release:        6%{?dist}.hn
 Summary:        An open source, advanced key-value store.
 License:        BSD
 URL:            http://redis.io/

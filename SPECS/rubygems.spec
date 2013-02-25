@@ -26,7 +26,7 @@
 Summary:	The Ruby standard for packaging ruby libraries
 Name:		rubygems
 Version:	1.8.24
-Release:	3%{?dist}
+Release:	3%{?dist}.hn
 Group:		Development/Libraries
 License:	Ruby or MIT
 

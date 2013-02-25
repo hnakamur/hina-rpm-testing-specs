@@ -1,7 +1,6 @@
 #!/bin/sh
 rpmbuild \
   --define "_topdir /home/repoforge/hina-testing" \
-  --define "dist `rpm --eval %{dist}`.hn" \
   --define "_signature gpg" \
   --define "_gpg_name Hiroaki Nakamura <hnakamur@gmail.com>" \
   --define "packager  Hiroaki Nakamura <hnakamur@gmail.com>" \

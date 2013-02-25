@@ -1,6 +1,6 @@
 Name: pcre8
 Version: 8.32
-Release: 1%{?dist}
+Release: 1%{?dist}.hn
 Summary: Perl-compatible regular expression library
 URL: http://www.pcre.org/
 Source: http://downloads.sourceforge.net/project/pcre/pcre/%{version}/pcre-%{version}.tar.bz2
