@@ -8,7 +8,7 @@
 Summary: high performance web server
 Name: nginx
 Version: 1.3.11
-Release: 1%{?dist}.hn
+Release: 1%{?dist}
 Vendor: nginx inc.
 URL: http://nginx.org/
 

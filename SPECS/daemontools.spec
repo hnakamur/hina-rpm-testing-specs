@@ -7,7 +7,7 @@
 Name:		daemontools
 Summary:	DJB daemontools
 Version:	0.76
-Release:	4%{?dist}.hn
+Release:	4%{?dist}
 License:	GNU
 Group:		System/Servers
 URL:		http://cr.yp.to/daemontools.html

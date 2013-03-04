@@ -5,7 +5,7 @@
 Summary: Ping alike tool for http requests
 Name: httping
 Version: 1.5.7
-Release: 1%{?dist}.hn
+Release: 1%{?dist}
 License: GPL
 Group: Applications/Internet
 URL: http://www.vanheusden.com/httping/
